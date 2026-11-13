@@ -1,0 +1,11 @@
+# Боевой стенд лектора: все сервисы короткого CTF + проверщик флагов.
+# Запускается через `make lecture-up LECTURE=01-intro` (боевые флаги из flags.real.env,
+# BIND=0.0.0.0). Студентам НЕ выдаётся. Включает forensics и checker, которых нет
+# в студенческом docker-compose.yml.
+name: ctf-lecture-1
+include:
+  - web-portal/deploy/docker-compose.yml
+  - crypto-xor-oracle/deploy/docker-compose.yml
+  - forensics-ftp-backup/deploy/docker-compose.yml
+  - pwn-gatekeeper/deploy/docker-compose.yml
+  - checker/docker-compose.yml

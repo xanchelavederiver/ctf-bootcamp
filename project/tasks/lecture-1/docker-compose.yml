@@ -1,0 +1,13 @@
+# Короткий CTF лекции 01-intro — локальный запуск всех сервисных заданий сразу.
+# Флаги по умолчанию (BootCTF{default_...}); на боевом стенде лектора флаги другие.
+#
+#   docker compose up --build       поднять web, crypto и pwn
+#   docker compose down             остановить
+#
+# Задание forensics решается по выданному дампу; его живой сервер поднимает лектор.
+# Каждое задание можно запустить и по отдельности из его каталога deploy/.
+name: ctf-lecture-1
+include:
+  - web-portal/deploy/docker-compose.yml
+  - crypto-xor-oracle/deploy/docker-compose.yml
+  - pwn-gatekeeper/deploy/docker-compose.yml

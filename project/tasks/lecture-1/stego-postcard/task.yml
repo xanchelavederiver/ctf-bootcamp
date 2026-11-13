@@ -1,0 +1,20 @@
+# Метаданные задания. Проверка: make tasks-check TASK=lecture-1/stego-postcard
+name: "Открытка"
+id: stego-postcard
+category: stego
+difficulty: easy
+points: 100
+author: "Мини-курс «Введение в CTF»"
+flag: "BootCTF{png_text_chunk_meta}"   # флаг №1: tEXt-метаданные
+tags: [stego, png, lsb, metadata]
+lecture: 01-intro
+order: 4
+
+flags:
+  - {id: 2, flag: "BootCTF{bitplane_red_art}", points: 100, title: "Бит-плоскость красного канала"}
+  - {id: 3, flag: "BootCTF{blue_lsb_row_major}", points: 150, title: "LSB синего канала"}
+  - {id: 4, flag: "BootCTF{zip_after_iend_chunk}", hidden: true, title: "ZIP после IEND"}
+
+# Флаг №1 лежит в метаданных открытым текстом — это и есть суть первого шага,
+# поэтому проверка на открытый текст для файловых флагов здесь отключена.
+flag_in_public: true

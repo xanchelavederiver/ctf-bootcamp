@@ -1,0 +1,29 @@
+# Результаты сборки (слайды PDF/PPTX, архивы заданий)
+public/
+
+# Зависимости и промежуточные файлы сборки слайдов
+node_modules/
+project/lectures/.build/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Редакторы и ОС
+.idea/
+.vscode/
+.DS_Store
+
+# Боевые флаги лектора: flags.real.env коллекции (умолчания — в deploy/flags.env.defaults,
+# шаблон боевого файла — flags.real.env.example). Сам боевой файл в Git не входит.
+project/tasks/*/flags.real.env
+
+# Локальные материалы и черновики
+.sources/
+.tmp/
+.claude/settings.local.json
+
+
+# custom area
+.claude/prompts/tmp.md

@@ -1,0 +1,174 @@
+/* @theme ctf-academic */
+/*
+ * Тема лекционных слайдов мини-курса по CTF.
+ * Шрифты (Inter, JetBrains Mono) встраиваются скриптом scripts/build.mjs,
+ * поэтому сборка не зависит от сети и системных шрифтов.
+ */
+@import 'default';
+
+:root {
+  --c-ink: #111827;
+  --c-accent: #0b7285;
+  --c-accent-dark: #095c6b;
+  --c-muted: #5d6b82;
+  --c-surface: #f5f8fc;
+  --c-tint: #eef8fa;
+  --c-line: #c9d3df;
+  --c-amber: #f0a500;
+  --c-amber-ink: #8a5d00;
+  --c-amber-tint: #fff3d6;
+  --c-term-bg: #171a21;
+  --c-term-ink: #d7dce5;
+}
+
+section {
+  width: 1280px;
+  height: 720px;
+  padding: 56px 64px 72px;
+  font-family: Inter, 'Liberation Sans', 'DejaVu Sans', sans-serif;
+  font-size: 25px;
+  line-height: 1.42;
+  color: var(--c-ink);
+  background: #fff;
+  /* Содержимое прижато к верху; титульные слайды центрируются отдельно. */
+  place-content: start normal;
+}
+
+/* --- Заголовки ---------------------------------------------------------- */
+h1, h2, h3 { border: 0; margin: 0; padding: 0; letter-spacing: -0.01em; }
+h1 { font-size: 1.5em; line-height: 1.2; color: var(--c-accent); margin-bottom: 0.7em; }
+h2 { font-size: 1.15em; color: var(--c-accent-dark); margin: 0.6em 0 0.35em; }
+h3 { font-size: 1em; color: var(--c-ink); margin: 0.6em 0 0.3em; }
+
+p, ul, ol, table, pre, blockquote { margin: 0 0 0.6em; }
+ul, ol { padding-left: 1.2em; }
+li { margin: 0.22em 0; }
+li > ul, li > ol { margin: 0.15em 0 0; font-size: 0.92em; }
+strong { color: var(--c-accent-dark); font-weight: 600; }
+a { color: var(--c-accent); text-decoration: none; border-bottom: 1px solid currentColor; }
+small, .muted { color: var(--c-muted); font-size: 0.8em; }
+
+/* --- Код ---------------------------------------------------------------- */
+code {
+  font-family: 'JetBrains Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace;
+  font-variant-ligatures: none;
+  font-size: 0.86em;
+  background: #eef2f6;
+  color: #0f3d47;
+  border-radius: 4px;
+  padding: 0.08em 0.3em;
+}
+pre {
+  font-size: 0.72em;
+  line-height: 1.5;
+  padding: 0.75em 1em;
+  border-radius: 8px;
+  border: 1px solid var(--c-line);
+  background: var(--c-surface);
+}
+pre code { background: none; color: inherit; padding: 0; font-size: 1em; }
+
+/* Транскрипты терминала: блок ```console — тёмный фон, как в консоли. */
+pre:has(> code.language-console),
+pre:has(> code.language-shell-session) {
+  background: var(--c-term-bg);
+  border-color: var(--c-term-bg);
+  color: var(--c-term-ink);
+  box-shadow: 0 2px 10px rgba(16, 24, 40, 0.25);
+}
+pre:has(> code.language-console) :is(.hljs-meta, .hljs-meta.prompt_),
+pre:has(> code.language-shell-session) :is(.hljs-meta, .hljs-meta.prompt_) { color: #7ee787; }
+pre:has(> code.language-console) :is(.hljs-string, .hljs-built_in, .hljs-keyword, .hljs-number,
+  .hljs-variable, .hljs-literal, .hljs-comment, .hljs-attr, .hljs-title, .bash),
+pre:has(> code.language-shell-session) :is(.hljs-string, .hljs-built_in, .hljs-keyword, .hljs-number,
+  .hljs-variable, .hljs-literal, .hljs-comment, .hljs-attr, .hljs-title, .bash) { color: inherit; }
+
+/* --- Таблицы ------------------------------------------------------------ */
+section table { font-size: 0.82em; border-collapse: collapse; width: 100%; display: table; }
+section table tr :is(th, td) { border: 0; border-bottom: 1px solid var(--c-line); padding: 0.4em 0.7em; text-align: left; background: none; }
+section table thead tr th { color: var(--c-accent-dark); border-bottom: 2px solid var(--c-accent); font-weight: 600; }
+section :is(tr, tr:nth-child(2n)) { background: none; border: 0; }
+section table tr:nth-child(2n) td { background: var(--c-surface); }
+
+/* --- Врезки ------------------------------------------------------------- */
+/* Цитата `> ...` — определение или ключевой тезис. */
+blockquote {
+  border-left: 4px solid var(--c-accent);
+  background: var(--c-tint);
+  color: var(--c-ink);
+  padding: 0.6em 0.9em;
+  border-radius: 0 8px 8px 0;
+}
+blockquote > :last-child { margin-bottom: 0; }
+
+.note, .warn {
+  border-radius: 8px;
+  padding: 0.6em 0.9em;
+  margin: 0 0 0.6em;
+  font-size: 0.9em;
+}
+.note { background: var(--c-surface); border: 1px solid var(--c-line); }
+.warn { background: var(--c-amber-tint); border: 1px solid var(--c-amber); color: #4d3500; }
+.warn strong { color: var(--c-amber-ink); }
+.note > :last-child, .warn > :last-child { margin-bottom: 0; }
+
+/* --- Колонки ------------------------------------------------------------ */
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; align-items: start; margin: 0 0 0.6em; }
+.cols.c-2-3 { grid-template-columns: 2fr 3fr; }
+.cols.c-3-2 { grid-template-columns: 3fr 2fr; }
+.cols > div > :last-child { margin-bottom: 0; }
+
+img { max-width: 100%; }
+p:has(> img:only-child) { text-align: center; }
+
+/* --- Колонтитул: источники слева, номер слайда справа -------------------- */
+header, footer { color: var(--c-muted); font-size: 0.56em; left: 64px; right: 140px; }
+header { top: 22px; }
+footer { bottom: 24px; }
+section::after {
+  content: attr(data-marpit-pagination) ' / ' attr(data-marpit-pagination-total);
+  color: var(--c-muted);
+  font-size: 0.56em;
+  right: 64px;
+  bottom: 24px;
+  padding: 0;
+}
+
+/* --- Титульный слайд: <!-- _class: title --> ------------------------------ */
+section.title {
+  place-content: center normal;
+  background: linear-gradient(135deg, #eef8fa, #f8faff);
+  padding-left: 96px;
+  border-left: 16px solid var(--c-accent);
+}
+section.title h1 { font-size: 2.2em; max-width: 85%; margin-bottom: 0.25em; }
+section.title h2 { font-size: 1.25em; color: var(--c-ink); font-weight: 500; margin: 0 0 1.2em; }
+section.title p { color: var(--c-muted); margin: 0.1em 0; font-size: 0.85em; }
+
+/* --- Титул раздела с оглавлением частей: <!-- _class: section --> --------- */
+section.section {
+  place-content: center normal;
+  background: var(--c-surface);
+  padding-left: 96px;
+  border-left: 16px solid var(--c-accent);
+}
+section.section h1 { font-size: 1.9em; margin-bottom: 0.6em; }
+section.section :is(ul, ol) { list-style: none; padding: 0; color: var(--c-muted); }
+section.section li { margin: 0.35em 0; padding-left: 0.8em; border-left: 3px solid transparent; }
+/* Текущая часть раздела выделяется полужирным: `- **1.2 Название**`. */
+section.section li:has(> strong) { border-left-color: var(--c-accent); }
+section.section li > strong { color: var(--c-ink); }
+
+/* --- План лекции: <!-- _class: plan --> ----------------------------------- */
+section.plan ol { font-size: 1.1em; }
+section.plan ol > li { margin: 0.5em 0; }
+section.plan ol > li::marker { color: var(--c-accent); font-weight: 600; }
+
+/* --- Источники: <!-- _class: sources --> ---------------------------------- */
+section.sources ol { font-size: 0.72em; line-height: 1.4; padding-left: 2em; }
+section.sources ol > li { margin: 0.35em 0; }
+section.sources ol > li::marker { content: '[' counter(list-item) ']  '; color: var(--c-accent-dark); }
+section.sources a { word-break: break-all; }
+
+/* --- Плотный слайд: <!-- _class: dense --> -------------------------------- */
+section.dense { font-size: 21px; }

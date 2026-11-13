@@ -1,0 +1,26 @@
+# Проверщик флагов. Поднимается вместе с заданиями через `make lecture-up` (только лектор).
+# COLLECTION_HOST — абсолютный путь к каталогу коллекции (подставляет taskctl.py).
+name: ctf-checker
+services:
+  checker:
+    build:
+      context: .
+    image: ctf-lecture-1/checker
+    ports:
+      - "${BIND:-127.0.0.1}:8000:8000"
+    environment:
+      COLLECTION_DIR: /collection
+    volumes:
+      - "${COLLECTION_HOST:?COLLECTION_HOST не задан (запускайте через make lecture-up)}:/collection:ro"
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    mem_limit: 256m
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/').status==200 else 1)"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s

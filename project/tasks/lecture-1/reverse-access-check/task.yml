@@ -1,0 +1,20 @@
+# Метаданные задания. Проверка: make tasks-check TASK=lecture-1/reverse-access-check
+name: "Пропуск"
+id: reverse-access-check
+category: reverse
+difficulty: easy
+points: 100
+author: "Мини-курс «Введение в CTF»"
+flag: "BootCTF{str1ngs_unlock_the_d00r}"   # флаг 1: открытая строка (strings)
+tags: [reverse, elf, gdb, strings, objdump]
+lecture: 01-intro
+order: 5
+
+flags:
+  - {id: 2, flag: "BootCTF{gdb_sees_the_c0nstruct0r}", points: 100, title: "XOR и конструктор (gdb)"}
+  - {id: 3, flag: "BootCTF{static_1f_ladder_at_h0me}", points: 150, title: "Цепочка if-ов (статический анализ)"}
+
+# Флаг 1 намеренно лежит в бинарнике открытой строкой, его поиск — часть задания.
+# Это снимает проверку «флаг открытым текстом» со всех флагов задания (так и задумано):
+# флаги 2 и 3 всё равно не встречаются в файле открытым текстом.
+flag_in_public: true

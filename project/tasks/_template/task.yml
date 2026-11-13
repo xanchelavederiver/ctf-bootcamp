@@ -1,0 +1,31 @@
+# Метаданные задания. Проверка: make tasks-check TASK=<категория>/<имя>
+name: "Название задания"
+id: template                # совпадает с именем каталога
+category: misc              # совпадает с каталогом категории (в коллекции — префикс имени)
+difficulty: easy            # easy | medium | hard
+points: 100
+author: ""
+flag: "BootCTF{replace_me}" # флаг №1; формат задаётся в project/tasks/tasks.yml
+tags: []                    # например: [xor, base64]
+lecture: ""                 # лекция, на которой задание разбирается, например 01-intro
+# order: 1                  # порядок задания внутри лекции (для коллекции)
+
+# Дополнительные флаги задания (кроме flag). Поля: id, flag; необязательные —
+# points, title, hidden (не выносится на слайды), env (имя переменной окружения
+# для флага времени выполнения; значение flag здесь — умолчание, см. README.md):
+# flags:
+#   - {id: 2, flag: "BootCTF{...}", points: 100, title: "Второй флаг"}
+#   - {id: 3, flag: "BootCTF{...}", env: TEMPLATE_FLAG_3}
+#   - {id: 4, flag: "BootCTF{...}", hidden: true, title: "Скрытый флаг"}
+
+# Каталоги задания, выдаваемые студенту помимо README.md и public/ (например, deploy
+# для заданий с сервисом, чтобы студент мог поднять копию локально):
+# handout: [deploy]
+
+# Раскомментировать для задания с сервисом (тогда нужен deploy/docker-compose.yml):
+# service:
+#   type: tcp               # tcp | http
+#   port: 1337
+
+# Флаг лежит в выдаваемом файле открытым текстом и его поиск — суть задания:
+# flag_in_public: true

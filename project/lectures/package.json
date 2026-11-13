@@ -1,0 +1,16 @@
+{
+  "name": "ctf-bootcamp-lectures",
+  "private": true,
+  "type": "module",
+  "description": "Сборка лекционных слайдов мини-курса по CTF (Marp: Markdown -> PDF, PPTX)",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "list": "node scripts/build.mjs --list",
+    "watch": "node scripts/build.mjs --watch"
+  },
+  "devDependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@marp-team/marp-cli": "^4.2.3"
+  }
+}

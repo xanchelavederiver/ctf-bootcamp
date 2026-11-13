@@ -1,0 +1,30 @@
+# «Турникет» (pwn). Запуск в одиночку:  docker compose up --build
+# По умолчанию порт слушается только на 127.0.0.1; у лектора BIND=0.0.0.0.
+# Флаг: умолчание — deploy/flags.env.defaults; боевое — ../../flags.real.env коллекции.
+name: ctf-pwn-gatekeeper
+services:
+  pwn-gatekeeper:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: ctf-lecture-1/pwn-gatekeeper
+    ports:
+      - "${BIND:-127.0.0.1}:9001:9001"
+    env_file:
+      - path: flags.env.defaults
+        required: true
+      - path: ../../flags.real.env
+        required: false
+    read_only: true
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    mem_limit: 256m
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "socat -u OPEN:/dev/null TCP:127.0.0.1:9001 2>/dev/null"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 3s
