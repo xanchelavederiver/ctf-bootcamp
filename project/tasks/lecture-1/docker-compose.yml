@@ -8,6 +8,6 @@
 # Каждое задание можно запустить и по отдельности из его каталога deploy/.
 name: ctf-lecture-1
 include:
-  - web-portal/deploy/docker-compose.yml
-  - crypto-xor-oracle/deploy/docker-compose.yml
-  - pwn-gatekeeper/deploy/docker-compose.yml
+  - 1-web-portal/deploy/docker-compose.yml
+  - 2-crypto-oracle/deploy/docker-compose.yml
+  - 6-pwn-gatekeeper/deploy/docker-compose.yml

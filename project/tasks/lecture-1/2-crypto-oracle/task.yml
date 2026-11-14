@@ -1,0 +1,23 @@
+# Метаданные задания. Проверка: make tasks-check TASK=lecture-1/2-crypto-oracle
+name: "Шифратор"
+id: crypto-oracle
+category: crypto
+difficulty: medium
+points: 150
+author: "Мини-курс «Введение в CTF»"
+flag: "BootCTF{default_crypto_caesar_motd}"   # флаг №1 (умолчание; боевой — в .env лектора)
+flag_env: CRYPTO_FLAG_1
+tags: [crypto, caesar, xor, aes, base64, curl]
+lecture: 01-intro
+order: 2
+
+flags:
+  - {id: 2, flag: "BootCTF{default_crypto_oracle}", env: CRYPTO_FLAG_2, points: 150, title: "XOR-оракул"}
+  - {id: 3, flag: "BootCTF{aes_time_seed_recovered}", points: 150, title: "AES по времени (backup.tar)"}
+  - {id: 4, flag: "BootCTF{default_crypto_keyreuse}", env: CRYPTO_FLAG_HIDDEN, hidden: true, title: "Повтор ключа XOR"}
+
+handout: [deploy]   # студент может поднять копию локально (флаги по умолчанию)
+
+service:
+  type: http
+  port: 8002

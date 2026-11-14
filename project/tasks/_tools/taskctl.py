@@ -10,7 +10,7 @@
     taskctl.py lecture-up <лекция>        поднять сервисы лекции с боевыми флагами (.env)
     taskctl.py lecture-down <лекция>      остановить сервисы лекции
 
-«Путь» — это <категория>/<имя> (обычное задание) или <коллекция>/<категория>-<имя>
+«Путь» — это <категория>/<имя> (обычное задание) или <коллекция>/<N>-<категория>-<имя>
 (задание внутри коллекции лекции). Структура задания — в project/tasks/README.md.
 Требуется PyYAML; команды verify/lecture-* требуют Docker.
 """
@@ -39,6 +39,12 @@ LECTURES = REPO / "project" / "lectures"
 
 REQUIRED = ("name", "id", "category", "difficulty", "points", "author", "flag")
 SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+ORDER_PREFIX = re.compile(r"^\d+-")  # необязательный номер задания в коллекции: 1-web-portal
+
+
+def base_name(name: str) -> str:
+    """Имя каталога задания без порядкового номера: 1-web-portal -> web-portal."""
+    return ORDER_PREFIX.sub("", name)
 SKIP_NAMES = {".gitkeep", ".DS_Store", "__pycache__", "node_modules", ".venv"}
 PLACEHOLDER_FLAG = "BootCTF{replace_me}"
 
@@ -153,16 +159,17 @@ def check_task(task: Path, config: dict) -> list[str]:
 
     if not SLUG.match(task.name):
         errors.append("имя каталога: допустимы строчные латинские буквы, цифры и дефис")
-    if meta.get("id") != task.name:
-        errors.append(f"task.yml: id «{meta.get('id')}» не совпадает с именем каталога «{task.name}»")
+    expected_id = base_name(task.name) if in_collection else task.name
+    if meta.get("id") != expected_id:
+        errors.append(f"task.yml: id «{meta.get('id')}» не совпадает с именем каталога «{expected_id}»")
 
     if in_collection:
-        # Внутри коллекции каталог называется <категория>-<имя>, категория — из task.yml.
+        # Внутри коллекции каталог называется [<номер>-]<категория>-<имя>, категория — из task.yml.
         if category not in config["categories"]:
             errors.append(f"task.yml: category «{category}» не объявлена в tasks.yml")
-        elif not task.name.startswith(f"{category}-"):
+        elif not base_name(task.name).startswith(f"{category}-"):
             errors.append(
-                f"имя каталога «{task.name}» в коллекции должно начинаться с «{category}-» "
+                f"имя каталога «{task.name}» в коллекции должно начинаться с «{category}-» (после номера) "
                 "(категория из task.yml)"
             )
     else:
@@ -292,14 +299,14 @@ def cmd_new(args: argparse.Namespace) -> int:
     config = load_config()
     parts = args.task.strip("/").split("/")
     if len(parts) != 2:
-        sys.exit("Ожидается <категория>/<имя> или <коллекция>/<категория>-<имя>")
+        sys.exit("Ожидается <категория>/<имя> или <коллекция>/<N>-<категория>-<имя>")
     first, name = parts
     if not SLUG.match(name):
         sys.exit("Имя задания: строчные латинские буквы, цифры и дефис")
 
     if first in config.get("collections", []):
-        # Внутри коллекции категория берётся из префикса имени: web-portal -> web.
-        category = name.split("-", 1)[0]
+        # Внутри коллекции категория берётся из префикса имени: 1-web-portal -> web.
+        category = base_name(name).split("-", 1)[0]
         if category not in config["categories"]:
             sys.exit(
                 f"Имя «{name}» должно начинаться с категории: {', '.join(config['categories'])}"
@@ -318,7 +325,8 @@ def cmd_new(args: argparse.Namespace) -> int:
     shutil.copytree(TEMPLATE, target)
     meta = target / "task.yml"
     text = meta.read_text(encoding="utf-8")
-    text = re.sub(r"^id: .*$", f"id: {name}", text, flags=re.M)
+    task_id = base_name(name) if first in config.get("collections", []) else name
+    text = re.sub(r"^id: .*$", f"id: {task_id}", text, flags=re.M)
     text = re.sub(r"^category: .*$", f"category: {category}", text, flags=re.M)
     meta.write_text(text, encoding="utf-8")
     print(f"Создано: {target.relative_to(REPO)}")
@@ -372,37 +380,15 @@ def service_port(meta: dict) -> int | None:
     return service.get("port") if service else None
 
 
-TOOLBOX_IMAGE = "ctf-toolbox:latest"
-
-
-def toolbox_available() -> bool:
-    return subprocess.run(
-        ["docker", "image", "inspect", TOOLBOX_IMAGE],
-        capture_output=True,
-    ).returncode == 0
-
-
 def run_solve(task: Path, host: str, port: int | None) -> list[str]:
-    """Запустить solution/solve.py. Если собран образ ctf-toolbox — внутри него
-    (там есть tshark, zsteg, john, pwntools и т. д.); иначе — системным python3."""
-    if toolbox_available():
-        cmd = [
-            "docker", "run", "--rm", "--platform", "linux/amd64", "--network", "host",
-            "-v", f"{task}:/task:ro", "-w", "/task",
-            "-e", f"TASK_HOST={host}", "-e", "PYTHONUNBUFFERED=1", "-e", "HOME=/tmp",
-        ]
-        if port is not None:
-            cmd += ["-e", f"TASK_PORT={port}"]
-        cmd += [TOOLBOX_IMAGE, "python3", "-I", "solution/solve.py"]
-        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
-    else:
-        env = dict(os.environ, TASK_HOST=host, PYTHONUNBUFFERED="1")
-        if port is not None:
-            env["TASK_PORT"] = str(port)
-        proc = subprocess.run(
-            [sys.executable, "-I", str(task / "solution" / "solve.py")],
-            cwd=task, env=env, capture_output=True, text=True, timeout=600,
-        )
+    """Запустить solution/solve.py системным python3 из каталога задания."""
+    env = dict(os.environ, TASK_HOST=host, PYTHONUNBUFFERED="1")
+    if port is not None:
+        env["TASK_PORT"] = str(port)
+    proc = subprocess.run(
+        [sys.executable, "-I", str(task / "solution" / "solve.py")],
+        cwd=task, env=env, capture_output=True, text=True, timeout=600,
+    )
     if proc.returncode != 0:
         raise RuntimeError(f"solve.py завершился с кодом {proc.returncode}:\n{proc.stderr}")
     return [line.strip() for line in proc.stdout.splitlines() if line.strip()]
@@ -542,9 +528,6 @@ def cmd_lecture_export(args: argparse.Namespace) -> int:
             if w.is_file():
                 shutil.copy2(w, wdir / f"{task.parent.name}-{task.name}.md")
 
-    # Образ toolbox кладётся отдельной командой (toolbox-export); здесь — только проверка.
-    toolbox_tar = out / "toolbox" / "ctf-toolbox.tar.gz"
-
     # Контроль утечки боевых флагов: если у лектора есть .env, ни один его флаг не должен
     # попасть в студенческий комплект.
     leaked = scan_real_flags(coll, out) if coll else []
@@ -553,15 +536,14 @@ def cmd_lecture_export(args: argparse.Namespace) -> int:
             print(f"УТЕЧКА  {item}")
         sys.exit("Экспорт остановлен: боевой флаг попал в студенческий комплект.")
 
-    # Единый zip (без образа toolbox — он крупный и лежит рядом).
+    # Единый zip.
     archive = REPO / "public" / "export" / f"{lecture}.zip"
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as zf:
         for path in sorted(out.rglob("*")):
-            if path.is_file() and path != toolbox_tar:
+            if path.is_file():
                 zf.write(path, path.relative_to(out.parent))
 
     print(f"Готово: {out.relative_to(REPO)}/ и {archive.relative_to(REPO)}")
-    print("Образ toolbox: make toolbox-export (кладётся в tasks/../toolbox/).")
     return 0
 
 

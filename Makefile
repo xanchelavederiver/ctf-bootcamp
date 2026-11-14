@@ -10,13 +10,11 @@ TASKCTL := $(PYTHON) "$(TASKS)/_tools/taskctl.py"
 LECTURE ?=
 TASK ?=
 
-TOOLBOX := $(TASKS)/lecture-1/toolbox
-TOOLBOX_IMAGE ?= ctf-toolbox:latest
 WRITEUPS ?=
 
 .PHONY: help setup lectures lectures-pdf lectures-pptx lectures-list lecture-dev lecture-new \
 	tasks-list tasks-check tasks-verify task-new task-export tasks-export \
-	toolbox-build toolbox-export lecture-up lecture-down lecture-export
+	lecture-up lecture-down lecture-export
 
 help:
 	@echo 'Слайды (Markdown -> public/lectures/*.pdf, *.pptx):'
@@ -36,8 +34,6 @@ help:
 	@echo '  make tasks-export                    архивы всех заданий'
 	@echo ''
 	@echo 'Короткий CTF лекции (коллекция lecture-1):'
-	@echo '  make toolbox-build                   собрать образ ctf-toolbox'
-	@echo '  make toolbox-export                  образ -> public/export/<лекция>/toolbox/'
 	@echo '  make lecture-up LECTURE=<id>         поднять сервисы с боевыми флагами (flags.real.env)'
 	@echo '  make lecture-down LECTURE=<id>       остановить сервисы'
 	@echo '  make lecture-export LECTURE=<id> [WRITEUPS=1]  комплект для студентов'
@@ -86,16 +82,6 @@ tasks-export:
 
 tasks-verify:
 	$(TASKCTL) verify $(TASK)
-
-toolbox-build:
-	docker build --platform linux/amd64 --provenance=false -t $(TOOLBOX_IMAGE) "$(TOOLBOX)"
-
-toolbox-export:
-	@test -n "$(LECTURE)" || { echo 'Usage: make toolbox-export LECTURE=<id>' >&2; exit 2; }
-	@mkdir -p "$(ROOT)/public/export/$(LECTURE)/toolbox"
-	docker image inspect $(TOOLBOX_IMAGE) >/dev/null 2>&1 || $(MAKE) toolbox-build
-	docker save $(TOOLBOX_IMAGE) | gzip > "$(ROOT)/public/export/$(LECTURE)/toolbox/ctf-toolbox.tar.gz"
-	@echo "Образ: public/export/$(LECTURE)/toolbox/ctf-toolbox.tar.gz"
 
 lecture-up:
 	@test -n "$(LECTURE)" || { echo 'Usage: make lecture-up LECTURE=<id>' >&2; exit 2; }

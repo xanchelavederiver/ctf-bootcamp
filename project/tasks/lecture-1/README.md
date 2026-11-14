@@ -5,12 +5,12 @@
 
 | Задание | Категория | Как получить доступ |
 |---|---|---|
-| «Портал» (`web-portal`) | web | `http://<host>:8001` |
-| «Шифратор» (`crypto-xor-oracle`) | crypto | `http://<host>:8002` + файл `backup.tar` |
-| «Резервная копия» (`forensics-ftp-backup`) | forensics | дамп `capture.pcapng`; живой FTP `<host>:2121` |
-| «Открытка» (`stego-postcard`) | stego | файл `postcard.png` |
-| «Пропуск» (`reverse-access-check`) | reverse | файл `access-check` |
-| «Турникет» (`pwn-gatekeeper`) | pwn | `nc <host> 9001` |
+| «Портал» (`1-web-portal`) | web | `http://<host>:8001` |
+| «Шифратор» (`2-crypto-oracle`) | crypto | `http://<host>:8002` + файл `backup.tar` |
+| «Резервная копия» (`3-forensics-ftp-backup`) | forensics | дамп `capture.pcapng`; живой FTP `<host>:21` |
+| «Открытка» (`4-stego-postcard`) | stego | файл `postcard.png` |
+| «Пропуск» (`5-reverse-access-check`) | reverse | файл `access-check` |
+| «Турникет» (`6-pwn-gatekeeper`) | pwn | `nc <host> 9001` |
 
 `<host>` — адрес машины преподавателя в аудитории; его называют в начале занятия.
 Файловые задания (PNG, ELF, `backup.tar`, `capture.pcapng`) лежат в каталоге каждого
@@ -24,21 +24,17 @@
 1. **Поставьте Docker.** Linux — `docs/install-linux.md`; Windows (WSL2 + Docker
    Desktop) — `docs/install-windows.md`. Нужна x86-64-машина (Linux или Windows + WSL2).
    На Apple Silicon задания reverse и pwn не запускаются.
-2. **Импортируйте образ инструментов** `ctf-toolbox` — `docs/toolbox.md`. В нём уже
-   собраны консольные утилиты для всех заданий.
-3. *(необязательно)* **Соберите сервисы локально**, чтобы потренироваться заранее
-   (см. ниже). Локальные копии работают с флагами-умолчаниями.
+2. **Поставьте инструменты** для заданий — те же инструкции, по разделу на категорию.
 
 Проверьте, что всё готово:
 
 ```console
 $ docker run --rm hello-world
-$ docker images ctf-toolbox
 ```
 
 ## Проверка флагов
 
-Найденный флаг отправляйте в проверщик преподавателя: `http://<host>:8000`.
+Найденный флаг отправляйте в жюрейка преподавателя: `http://<host>:8000`.
 Он отвечает «верно» или «неверно» и показывает, **сколько всего флагов** спрятано в
 каждом задании (включая те, что не разбираются на лекции). Если вы нашли не все —
 значит, есть что искать дома.
@@ -55,12 +51,12 @@ $ docker compose up --build        # web (8001), crypto (8002), pwn (9001)
 Или по одному заданию из его каталога `deploy/`:
 
 ```console
-$ cd web-portal/deploy
+$ cd 1-web-portal/deploy
 $ docker compose up --build
 ```
 
 > **Локальные флаги — не боевые.** В локальной копии зашит флаг-умолчание вида
-> `BootCTF{default_...}`. Проверщик узнаёт такие флаги и отвечает «это флаг локальной
+> `BootCTF{default_...}`. жюрейка узнаёт такие флаги и отвечает «это флаг локальной
 > копии»: на боевом стенде преподавателя флаг другой. Локальный запуск — для тренировки,
 > зачёт идёт по флагам со стенда преподавателя.
 
@@ -77,6 +73,5 @@ $ docker image prune               # убрать неиспользуемые �
 
 ## Инструкции
 
-- `docs/toolbox.md` — импорт и запуск образа `ctf-toolbox`.
-- `docs/install-linux.md` — установка инструментов на Linux (альтернатива образу).
+- `docs/install-linux.md` — установка инструментов на Linux.
 - `docs/install-windows.md` — Windows: WSL2, Docker Desktop, графические инструменты.

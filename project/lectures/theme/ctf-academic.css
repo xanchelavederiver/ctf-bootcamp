@@ -145,29 +145,13 @@ section.title h1 { font-size: 2.2em; max-width: 85%; margin-bottom: 0.25em; }
 section.title h2 { font-size: 1.25em; color: var(--c-ink); font-weight: 500; margin: 0 0 1.2em; }
 section.title p { color: var(--c-muted); margin: 0.1em 0; font-size: 0.85em; }
 
-/* --- Титул раздела с оглавлением частей: <!-- _class: section --> --------- */
-section.section {
-  place-content: center normal;
-  background: var(--c-surface);
-  padding-left: 96px;
-  border-left: 16px solid var(--c-accent);
-}
-section.section h1 { font-size: 1.9em; margin-bottom: 0.6em; }
-section.section :is(ul, ol) { list-style: none; padding: 0; color: var(--c-muted); }
-section.section li { margin: 0.35em 0; padding-left: 0.8em; border-left: 3px solid transparent; }
-/* Текущая часть раздела выделяется полужирным: `- **1.2 Название**`. */
-section.section li:has(> strong) { border-left-color: var(--c-accent); }
-section.section li > strong { color: var(--c-ink); }
-
-/* --- План лекции: <!-- _class: plan --> ----------------------------------- */
-section.plan ol { font-size: 1.1em; }
-section.plan ol > li { margin: 0.5em 0; }
-section.plan ol > li::marker { color: var(--c-accent); font-weight: 600; }
-
 /* --- Источники: <!-- _class: sources --> ---------------------------------- */
 section.sources ol { font-size: 0.72em; line-height: 1.4; padding-left: 2em; }
 section.sources ol > li { margin: 0.35em 0; }
 section.sources ol > li::marker { content: '[' counter(list-item) ']  '; color: var(--c-accent-dark); }
+section.sources ul { font-size: 0.66em; line-height: 1.35; padding-left: 1.1em; }
+section.sources ul > li { margin: 0.25em 0; }
+section.sources p { font-size: 0.8em; margin-bottom: 0.3em; }
 section.sources a { word-break: break-all; }
 
 /* --- Плотный слайд: <!-- _class: dense --> -------------------------------- */

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block head %}
+  <!-- note-01: {{ comment }} -->
+{%- endblock %}
+{% block content %}
+    <p>Добро пожаловать в клиентский портал. Сервис находится на аудите безопасности.</p>
+    <form action="/hello" method="get">
+      <label for="name">Здравствуйте! Как вас зовут?</label>
+      <input type="text" id="name" name="name" placeholder="Ваше имя" autocomplete="off" autofocus>
+      <button type="submit">Представиться</button>
+    </form>
+    <ul>
+      <li>Служебный API описан в <code>/robots.txt</code></li>
+    </ul>
+{% endblock %}
+{% block scripts %}
+  <script src="/js/app.js"></script>
+{% endblock %}

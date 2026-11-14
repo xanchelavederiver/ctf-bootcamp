@@ -1,11 +1,10 @@
 # Установка инструментов на Linux
 
-Альтернатива образу `ctf-toolbox`: поставить утилиты прямо в систему. Подходит для
-Kali, Debian и Ubuntu (команды — для систем с `apt`). Если вы пользуетесь образом
-`ctf-toolbox` (`toolbox.md`), этот файл не нужен.
+Инструменты для заданий ставятся прямо в систему. Подходит для Kali, Debian и Ubuntu
+(команды — для ОС с `apt`).
 
-Почти всё ставится из репозиториев; после каждой группы — команда «проверка»,
-по которой видно, что инструмент на месте.
+Почти всё устанавливается из репозиториев; после каждой группы команд установки приведены команды проверки 
+корректности установки инструментов.
 
 ## Docker
 
@@ -13,7 +12,7 @@ Kali, Debian и Ubuntu (команды — для систем с `apt`). Есл
 $ sudo apt update
 $ sudo apt install -y docker.io docker-compose-plugin
 $ sudo systemctl enable --now docker
-$ sudo usermod -aG docker "$USER"   # затем перелогиньтесь
+$ sudo usermod -aG docker "$USER"   # затем перелогиньтесь или выполните newgrp docker
 ```
 
 Проверка:
@@ -25,10 +24,10 @@ $ docker run --rm hello-world
 ## Базовые утилиты
 
 ```console
-$ sudo apt install -y curl file xxd zip unzip p7zip-full python3 python3-pip
+$ sudo apt install -y file xxd zip unzip p7zip-full python3 python3-pip
 ```
 
-Проверка: `curl --version` и `python3 --version`.
+Проверка: `python3 --version`.
 
 ## web — «Портал»
 
@@ -61,16 +60,15 @@ $ tshark --version | head -1
 $ fcrackzip --help | head -1
 ```
 
-> `zip2john` в пакете Debian/Ubuntu отсутствует, поэтому пароль ZIP-архива подбирайте
-> через `fcrackzip -D -p <словарь> -u archive.zip`. Словарь `rockyou.txt` есть в Kali
-> (`/usr/share/wordlists/rockyou.txt.gz`), а в образе `ctf-toolbox` — список
-> `/usr/share/john/password.lst`.
+> Словари паролей: пакет `john` ставит список `/usr/share/john/password.lst`; в Kali
+> есть `rockyou.txt` (`/usr/share/wordlists/rockyou.txt.gz`).
 
 ## stego — «Открытка»
 
 ```console
 $ sudo apt install -y libimage-exiftool-perl binwalk ruby
 $ sudo gem install zsteg
+$ pip3 install --user pillow
 ```
 
 Проверка:
@@ -80,8 +78,7 @@ $ exiftool -ver
 $ zsteg --help | head -1
 ```
 
-Графический `StegSolve` (Java) и онлайн-сервис `Aperi'Solve` — по желанию, для
-просмотра битовых плоскостей.
+Графический `StegSolve` (Java) и онлайн-сервис `Aperi'Solve` — по желанию.
 
 ## reverse — «Пропуск»
 
@@ -90,8 +87,8 @@ $ sudo apt install -y gdb binutils
 $ pip3 install --user pyelftools
 ```
 
-Проверка: `gdb --version | head -1`, `objdump --version | head -1`. Декомпилятор
-`Ghidra` ставится отдельно (нужна Java): страница проекта <https://ghidra-sre.org/>.
+Проверка: `gdb --version | head -1`, `objdump --version | head -1`.
+Дизассемблер `IDA` устанавливается отдельно, см. <https://hex-rays.com/ida-free>.
 
 ## pwn — «Турникет»
 

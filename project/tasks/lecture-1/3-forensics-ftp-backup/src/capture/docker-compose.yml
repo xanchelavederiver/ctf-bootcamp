@@ -1,0 +1,37 @@
+# Генерация capture.pcapng: FTP-сервер и клиент — два контейнера с разными адресами.
+# В стенд не входит и студентам не выдаётся. Запуск — см. gen.py.
+name: ctf-forensics-gen
+services:
+  server:
+    build:
+      context: .
+    image: ctf-forensics-gen
+    platform: linux/amd64
+    command: ["python3", "/task/src/capture/gen.py", "server"]
+    cap_add: [NET_RAW, NET_ADMIN]
+    environment:
+      SERVER_IP: 10.10.20.5
+      HOST_UID: ${HOST_UID:-1001}
+      HOST_GID: ${HOST_GID:-1001}
+    volumes:
+      - ../..:/task
+    networks:
+      capture:
+        ipv4_address: 10.10.20.5
+  client:
+    image: ctf-forensics-gen
+    platform: linux/amd64
+    command: ["python3", "/task/src/capture/gen.py", "client"]
+    depends_on: [server]
+    environment:
+      SERVER_IP: 10.10.20.5
+    volumes:
+      - ../..:/task:ro
+    networks:
+      capture:
+        ipv4_address: 10.10.20.23
+networks:
+  capture:
+    ipam:
+      config:
+        - subnet: 10.10.20.0/24

@@ -25,7 +25,6 @@ make help                                # все команды
 Короткий CTF лекции (нужен Docker):
 
 ```sh
-make toolbox-build                       # образ инструментов ctf-toolbox
 make lecture-up LECTURE=01-intro         # боевой стенд (флаги из flags.real.env)
 make lecture-export LECTURE=01-intro     # комплект для студентов: public/export/01-intro/
 ```
