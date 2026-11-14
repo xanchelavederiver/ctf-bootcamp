@@ -26,7 +26,7 @@ make help                                # все команды
 
 ```sh
 make lecture-up LECTURE=01-intro         # боевой стенд (флаги из flags.real.env)
-make lecture-export LECTURE=01-intro     # комплект для студентов: public/export/01-intro/
+make lecture-export LECTURE=01-intro     # комплект для студентов: public/export/01-intro/ (PDF, -tasks.zip, -writeups.zip)
 ```
 
 Требования: GNU Make, Node.js 20+, Chrome или Chromium (сборка слайдов),

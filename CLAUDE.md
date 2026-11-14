@@ -7,13 +7,13 @@
 - `project/lectures/<NN-имя>/slides.md` — слайды лекции (Marp Markdown); тема — `project/lectures/theme/ctf-academic.css`; образец всех типов слайдов — `project/lectures/_template/slides.md`.
 - `project/tasks/<категория>/<имя>/` — демонстрационные задания; каждое самодостаточно (никаких ссылок за пределы своего каталога). Структура и правила — `project/tasks/README.md`, шаблон — `project/tasks/_template`.
 - `project/tasks/<коллекция>/<N>-<категория>-<имя>/` — задания коллекции лекции (короткий CTF); `<N>` — порядковый номер задания (как `order` в `task.yml`), `id` — имя каталога без номера. Коллекция `lecture-1` относится к лекции `01-intro`; в ней также `checker/` (проверщик флагов — только для лектора), `docs/` (установка инструментов), `flags.real.env.example` (шаблон боевых флагов).
-- `public/` — результаты сборки, в Git не входит. Комплект студентов — `public/export/<лекция>/`.
+- `public/` — результаты сборки, в Git не входит. Комплект студентов — `public/export/<лекция>/`: `<лекция>.pdf`, `<лекция>-tasks.zip`, `<лекция>-writeups.zip`.
 
 ## Команды
 
 - `make lectures [LECTURE=<id>]` — PDF и PPTX в `public/lectures/`; `make lectures LECTURE=_template` — собрать образец.
 - `make task-new TASK=<путь>`, `make tasks-check [TASK=<путь>]`, `make tasks-verify [TASK=<путь>]`, `make task-export TASK=<путь>`. Путь — `<категория>/<имя>` или `<коллекция>/<N>-<категория>-<имя>`.
-- Короткий CTF: `make lecture-up/lecture-down LECTURE=<id>` (боевой стенд из `flags.real.env`), `make lecture-export LECTURE=<id> [WRITEUPS=1]`.
+- Короткий CTF: `make lecture-up/lecture-down LECTURE=<id>` (боевой стенд из `flags.real.env`), `make lecture-export LECTURE=<id>`.
 - `make help` — полный список.
 
 ## Правила работы

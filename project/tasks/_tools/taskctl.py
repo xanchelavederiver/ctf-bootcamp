@@ -6,7 +6,7 @@
     taskctl.py new <путь>                 новое задание из шаблона _template
     taskctl.py export [<путь> ...]        архивы одного/всех заданий в public/tasks/
     taskctl.py verify [<путь> ...]        запуск сервиса и сверка solve.py со всеми флагами
-    taskctl.py lecture-export <лекция>    комплект для студентов: PDF рядом + задания
+    taskctl.py lecture-export <лекция>    комплект для студентов: PDF, архивы заданий и разборов
     taskctl.py lecture-up <лекция>        поднять сервисы лекции с боевыми флагами (.env)
     taskctl.py lecture-down <лекция>      остановить сервисы лекции
 
@@ -23,6 +23,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import zipfile
 from pathlib import Path
 
@@ -487,10 +488,15 @@ def cmd_lecture_export(args: argparse.Namespace) -> int:
 
     coll = collection_dir(lecture, tasks)
     out = REPO / "public" / "export" / lecture
-    tasks_out = out / "tasks"
     if out.exists():
         shutil.rmtree(out)
-    tasks_out.mkdir(parents=True)
+    out.mkdir(parents=True)
+    # Содержимое архивов собирается во временном каталоге: в public/export/<лекция>/
+    # остаются только три файла — PDF, архив заданий и архив разборов.
+    stage = Path(tempfile.mkdtemp(prefix="lecture-export-"))
+    tasks_name, writeups_name = f"{lecture}-tasks", f"{lecture}-writeups"
+    tasks_out = stage / tasks_name
+    tasks_out.mkdir()
 
     # PDF лекции (без заметок докладчика) должен быть уже собран Makefile'ом.
     pdf = REPO / "public" / "lectures" / f"{lecture}.pdf"
@@ -519,31 +525,35 @@ def cmd_lecture_export(args: argparse.Namespace) -> int:
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(path, target)
 
-    # Разборы для студентов — только по запросу (WRITEUPS=1).
-    if args.writeups:
-        wdir = out / "writeups"
-        wdir.mkdir()
-        for task in tasks:
-            w = task / "solution" / "writeup.md"
-            if w.is_file():
-                shutil.copy2(w, wdir / f"{task.parent.name}-{task.name}.md")
+    # Разборы для студентов — отдельным архивом (выдаётся позднее).
+    wdir = stage / writeups_name
+    wdir.mkdir()
+    for task in tasks:
+        w = task / "solution" / "writeup.md"
+        if w.is_file():
+            shutil.copy2(w, wdir / f"{task.name}.md")
 
     # Контроль утечки боевых флагов: если у лектора есть .env, ни один его флаг не должен
     # попасть в студенческий комплект.
-    leaked = scan_real_flags(coll, out) if coll else []
+    leaked = scan_real_flags(coll, stage) if coll else []
     if leaked:
+        shutil.rmtree(stage)
+        shutil.rmtree(out)
         for item in leaked:
             print(f"УТЕЧКА  {item}")
         sys.exit("Экспорт остановлен: боевой флаг попал в студенческий комплект.")
 
-    # Единый zip.
-    archive = REPO / "public" / "export" / f"{lecture}.zip"
-    with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as zf:
-        for path in sorted(out.rglob("*")):
-            if path.is_file():
-                zf.write(path, path.relative_to(out.parent))
+    for name in (tasks_name, writeups_name):
+        with zipfile.ZipFile(out / f"{name}.zip", "w", zipfile.ZIP_DEFLATED) as zf:
+            for path in sorted((stage / name).rglob("*")):
+                if path.is_file():
+                    zf.write(path, path.relative_to(stage))
+    shutil.rmtree(stage)
 
-    print(f"Готово: {out.relative_to(REPO)}/ и {archive.relative_to(REPO)}")
+
+    print(f"Готово: {out.relative_to(REPO)}/")
+    for path in sorted(out.iterdir()):
+        print(f"  {path.name}")
     return 0
 
 
@@ -635,7 +645,6 @@ def main() -> int:
     verify.set_defaults(func=cmd_verify)
     lexport = sub.add_parser("lecture-export")
     lexport.add_argument("lecture")
-    lexport.add_argument("--writeups", action="store_true")
     lexport.set_defaults(func=cmd_lecture_export)
     lup = sub.add_parser("lecture-up")
     lup.add_argument("lecture")

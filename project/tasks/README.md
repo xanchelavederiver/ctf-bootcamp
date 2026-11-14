@@ -118,12 +118,18 @@ make tasks-export                            # архивы всех задан�
 ```sh
 make lecture-up LECTURE=01-intro     # боевой стенд: все сервисы + checker, флаги из flags.real.env
 make lecture-down LECTURE=01-intro   # остановить стенд
-make lecture-export LECTURE=01-intro [WRITEUPS=1]  # комплект для студентов
+make lecture-export LECTURE=01-intro # комплект для студентов
 ```
 
 `make lecture-up` требует `flags.real.env` в каталоге коллекции (скопировать из
 `flags.real.env.example`, вписать боевые флаги) и поднимает сервисы с `BIND=0.0.0.0`.
-`make lecture-export` собирает в `public/export/<лекция>/` PDF лекции (без заметок
-докладчика), условия заданий, `docs/` и общий `docker-compose.yml`; боевые флаги,
-`src/`, `solution/` и проверщик в комплект не попадают, а экспорт прерывается, если
-боевой флаг просочился в собранные файлы.
+`make lecture-export` заново собирает `public/export/<лекция>/` из трёх файлов:
+
+| Файл | Содержимое |
+|---|---|
+| `<лекция>.pdf` | слайды лекции без заметок докладчика |
+| `<лекция>-tasks.zip` | условия заданий, `public/`, выдаваемые каталоги (`handout`), `docs/` и общий `docker-compose.yml` |
+| `<лекция>-writeups.zip` | разборы для студентов (`solution/writeup.md`), выдаются после занятия |
+
+Боевые флаги, `src/`, разборы для преподавателя, `solve.py` и проверщик в комплект не
+попадают, а экспорт прерывается, если боевой флаг просочился в собранные файлы.

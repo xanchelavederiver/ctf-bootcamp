@@ -10,7 +10,6 @@ TASKCTL := $(PYTHON) "$(TASKS)/_tools/taskctl.py"
 LECTURE ?=
 TASK ?=
 
-WRITEUPS ?=
 
 .PHONY: help setup lectures lectures-pdf lectures-pptx lectures-list lecture-dev lecture-new \
 	tasks-list tasks-check tasks-verify task-new task-export tasks-export \
@@ -36,7 +35,7 @@ help:
 	@echo 'Короткий CTF лекции (коллекция lecture-1):'
 	@echo '  make lecture-up LECTURE=<id>         поднять сервисы с боевыми флагами (flags.real.env)'
 	@echo '  make lecture-down LECTURE=<id>       остановить сервисы'
-	@echo '  make lecture-export LECTURE=<id> [WRITEUPS=1]  комплект для студентов'
+	@echo '  make lecture-export LECTURE=<id>     комплект для студентов: PDF, задания, разборы'
 
 setup:
 	$(NPM) --prefix "$(LECTURES)" ci
@@ -92,6 +91,6 @@ lecture-down:
 	$(TASKCTL) lecture-down $(LECTURE)
 
 lecture-export:
-	@test -n "$(LECTURE)" || { echo 'Usage: make lecture-export LECTURE=<id> [WRITEUPS=1]' >&2; exit 2; }
+	@test -n "$(LECTURE)" || { echo 'Usage: make lecture-export LECTURE=<id>' >&2; exit 2; }
 	PDF_NOTES=0 $(NPM) --prefix "$(LECTURES)" run --silent build -- --pdf $(LECTURE)
-	$(TASKCTL) lecture-export $(LECTURE) $(if $(WRITEUPS),--writeups,)
+	$(TASKCTL) lecture-export $(LECTURE)
