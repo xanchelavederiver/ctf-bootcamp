@@ -105,8 +105,8 @@ base64 здесь обязательно передавать через `--data
 
 ```console
 $ tar -tvf public/backup.tar
--rw-r--r-- lighthouse/lighthouse  854 2026-11-01 09:30 encrypt.py
--rw-r--r-- lighthouse/lighthouse  560 2026-11-01 09:30 report.enc
+-rw-r--r-- lighthouse/lighthouse 858 2026-11-01 09:30 encrypt.py
+-rw-r--r-- lighthouse/lighthouse 560 2026-11-01 09:30 report.enc
 ```
 
 Из `encrypt.py` видно, как получен `report.enc`:

@@ -25,4 +25,4 @@ def encrypt(path_in: str, path_out: str, seconds: int | None = None) -> None:
 
 if __name__ == "__main__":
     encrypt(sys.argv[1], sys.argv[2])
-    print("report.enc записан")
+    print(f"{sys.argv[2]} записан")
