@@ -5,7 +5,7 @@ category: pwn
 difficulty: easy
 points: 100
 author: "Мини-курс «Введение в CTF»"
-flag: "BootCTF{default_pwn_ret2win}"   # умолчание; боевое значение — в flags.real.env лектора
+flag: "BootCTF{default_pwn_1}"   # умолчание; боевое значение — в flags.real.env лектора
 flag_env: PWN_FLAG_1
 tags: [pwn, bof, stack, ret2win]
 lecture: 01-intro

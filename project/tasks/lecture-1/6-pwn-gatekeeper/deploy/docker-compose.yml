@@ -1,6 +1,6 @@
 # «Турникет» (pwn). Запуск в одиночку:  docker compose up --build
 # По умолчанию порт слушается только на 127.0.0.1; у лектора BIND=0.0.0.0.
-# Флаг: умолчание — deploy/flags.env.defaults; боевое — ../../flags.real.env коллекции.
+# Флаг по умолчанию — flags.env.defaults.
 name: ctf-pwn-gatekeeper
 services:
   pwn-gatekeeper:

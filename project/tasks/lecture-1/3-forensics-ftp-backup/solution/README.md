@@ -63,7 +63,7 @@ Debian `john` нет утилиты `zip2john`, поэтому в стенде �
 `Harbor-2026` на `<host>:21`. Сеанс из дампа забрал только `notes.txt` и
 `backup.zip` из корня и в каталог `archive/` не заходил. Там, в `archive/old/`,
 лежит `handover.txt` со скрытым флагом (на локальной копии —
-`BootCTF{default_forensics_hidden_dir}`, на боевом стенде — свой).
+`BootCTF{default_forensics_4}`, на боевом стенде — свой).
 
 ## Порядок живой демонстрации
 

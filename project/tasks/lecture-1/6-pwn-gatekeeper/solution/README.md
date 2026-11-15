@@ -37,7 +37,7 @@
 
    ```console
    $ TASK_HOST=127.0.0.1 python3 solution/solve.py
-   BootCTF{default_pwn_ret2win}
+   BootCTF{default_pwn_1}
    ```
 
 ## Подсказки по нарастающей

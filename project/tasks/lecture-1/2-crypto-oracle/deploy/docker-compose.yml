@@ -1,13 +1,18 @@
 # «Шифратор» (crypto). Запуск в одиночку:  docker compose up --build
-# Флаги: умолчания — deploy/flags.env.defaults; боевые — ../../flags.real.env коллекции.
+# По умолчанию порт слушается только на 127.0.0.1; у лектора BIND=0.0.0.0.
+# Флаги по умолчанию — flags.env.defaults.
+#
+# Наружу публикуется только nginx (crypto-oracle-proxy); приложение доступно ему по
+# внутренней сети. Зависшее приложение перезапускает сторож (deploy/watchdog.py).
 name: ctf-crypto-oracle
 services:
   crypto-oracle:
     build:
       context: .
     image: ctf-lecture-1/crypto-oracle
-    ports:
-      - "${BIND:-127.0.0.1}:8002:8002"
+    expose:
+      - "8002"
+    networks: [crypto-oracle]
     env_file:
       - path: flags.env.defaults
         required: true
@@ -16,6 +21,7 @@ services:
     read_only: true
     tmpfs:
       - /tmp
+    init: true
     cap_drop: [ALL]
     security_opt:
       - no-new-privileges:true
@@ -23,8 +29,37 @@ services:
     mem_limit: 256m
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "python3", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8002/').status==200 else 1)"]
+      test: ["CMD", "python3", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8002/', timeout=3).status==200 else 1)"]
       interval: 5s
-      timeout: 3s
+      timeout: 4s
       retries: 5
       start_period: 5s
+
+  crypto-oracle-proxy:
+    image: nginxinc/nginx-unprivileged:1.27.5-alpine
+    ports:
+      - "${BIND:-127.0.0.1}:8002:8080"
+    networks: [crypto-oracle]
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      crypto-oracle:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 64
+    mem_limit: 64m
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/"]
+      interval: 5s
+      timeout: 4s
+      retries: 5
+      start_period: 5s
+
+networks:
+  crypto-oracle:

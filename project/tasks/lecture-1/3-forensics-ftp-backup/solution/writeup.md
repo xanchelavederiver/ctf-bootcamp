@@ -120,10 +120,10 @@ drwxr-xr-x   3 appuser  appuser   60 archive
 -rw-r--r--   1 appuser  appuser  326 notes.txt
 -rw-r--r--   1 appuser  appuser  113 handover.txt
 Акт приёма-передачи смены.
-Флаг дежурного: BootCTF{default_forensics_hidden_dir}
+Флаг дежурного: BootCTF{default_forensics_4}
 ```
 
-На локальной копии флаг — `BootCTF{default_forensics_hidden_dir}`; на боевом стенде
+На локальной копии флаг — `BootCTF{default_forensics_4}`; на боевом стенде
 лектора он другой. То же можно сделать обычным клиентом `ftp <host>` и командами
 `cd archive/old`, `get handover.txt`.
 

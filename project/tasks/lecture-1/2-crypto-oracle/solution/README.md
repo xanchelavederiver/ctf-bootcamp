@@ -10,10 +10,10 @@ AES с ключом, выведенным из времени, и, наконе�
 
 ```console
 $ TASK_HOST=127.0.0.1 TASK_PORT=8002 python3 solution/solve.py
-BootCTF{default_crypto_caesar_motd}
-BootCTF{default_crypto_oracle}
+BootCTF{default_crypto_1}
+BootCTF{default_crypto_2}
 BootCTF{aes_time_seed_recovered}
-BootCTF{default_crypto_keyreuse}
+BootCTF{default_crypto_4}
 ```
 
 ## Разбор по флагам
@@ -83,3 +83,16 @@ BootCTF{default_crypto_keyreuse}
    с нулевыми байтами (флаг 2).
 3. Флаг 3 и флаг 4 обозначить как домашние: открыть `encrypt.py`, показать `tar -tv`
    с датой и упомянуть повтор ключа в `/archive`.
+
+## Заметки по стенду
+
+- gunicorn (gthread) читает запрос в рабочем потоке без тайм-аута: при прежней схеме
+  (1 процесс × 4 потока, порт опубликован напрямую) четырёх клиентов, оборвавших
+  запрос на середине заголовков, хватало, чтобы сервис молча перестал отвечать.
+  Поэтому, как и в «Портале», наружу смотрит nginx (`crypto-oracle-proxy`, тайм-ауты
+  в `deploy/nginx.conf`; имя приложения перерешается через DNS Docker, так что
+  перезапуск с новым IP прокси не ломает), gunicorn запущен как 3 процесса × 8
+  потоков, а `deploy/watchdog.py` перезапускает контейнер, если приложение всё же
+  зависло.
+- Ключ XOR общий для всех процессов: он читается из окружения (`CRYPTO_KEY`), а не
+  генерируется при старте, поэтому несколько процессов gunicorn шифруют одинаково.

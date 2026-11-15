@@ -25,7 +25,7 @@ def env(name: str) -> str:
 
 FLAG_1 = env("CRYPTO_FLAG_1")
 FLAG_2 = env("CRYPTO_FLAG_2")
-FLAG_HIDDEN = env("CRYPTO_FLAG_HIDDEN")
+FLAG_4 = env("CRYPTO_FLAG_4")
 KEY = bytes.fromhex(env("CRYPTO_KEY"))
 
 
@@ -47,7 +47,7 @@ def encrypt(data: bytes) -> bytes:
 
 MOTD = caesar(FLAG_1, SHIFT)
 ARCHIVE_MSG = (
-    f"Spare access flag for the backup channel: {FLAG_HIDDEN}. "
+    f"Spare access flag for the backup channel: {FLAG_4}. "
     "Do not disclose the master key to anyone."
 ).encode()
 

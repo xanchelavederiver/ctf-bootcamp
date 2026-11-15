@@ -16,7 +16,7 @@ order: 3
 flags:
   - {id: 2, flag: "BootCTF{zip_comment_not_encrypted}", points: 100, title: "Комментарий архива"}
   - {id: 3, flag: "BootCTF{zip_password_from_wordlist}", points: 150, title: "Пароль архива по словарю"}
-  - {id: 4, flag: "BootCTF{default_forensics_hidden_dir}", env: FORENSICS_FLAG_HIDDEN, hidden: true, title: "Каталог на живом сервере"}
+  - {id: 4, flag: "BootCTF{default_forensics_4}", env: FORENSICS_FLAG_4, hidden: true, title: "Каталог на живом сервере"}
 
 # deploy студенту не выдаётся: флаги 1–3 извлекаются из дампа, живой сервер поднимает
 # лектор (альтернативный маршрут и скрытый флаг). Поэтому handout не указан.

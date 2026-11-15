@@ -5,7 +5,7 @@
 к файлам), и дополнительно содержит каталог, в который сеанс из дампа не заходил:
 archive/old/handover.txt со скрытым флагом. Учётные данные — как в дампе.
 
-Скрытый флаг читается из окружения (FORENSICS_FLAG_HIDDEN). Адрес для пассивного
+Скрытый флаг читается из окружения (FORENSICS_FLAG_4). Адрес для пассивного
 режима задаётся через FTP_PASV_ADDRESS (у лектора — адрес его машины в сети).
 """
 
@@ -25,9 +25,9 @@ ROOT = Path("/tmp/ftproot")                    # рабочий каталог (
 
 
 def hidden_flag() -> str:
-    value = os.environ.get("FORENSICS_FLAG_HIDDEN")
+    value = os.environ.get("FORENSICS_FLAG_4")
     if not value:
-        raise RuntimeError("FORENSICS_FLAG_HIDDEN не задан (см. deploy/flags.env.defaults)")
+        raise RuntimeError("FORENSICS_FLAG_4 не задан (см. deploy/flags.env.defaults)")
     return value
 
 

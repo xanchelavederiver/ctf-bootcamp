@@ -14,7 +14,7 @@
 
 ```console
 $ curl -s http://127.0.0.1:8002/ | grep -o 'Сообщение дня:</b> <code>[^<]*</code>'
-Сообщение дня:</b> <code>IvvaJAM{klmhbsa_jyfwav_jhlzhy_tvak}</code>
+Сообщение дня:</b> <code>IvvaJAM{klmhbsa_jyfwav_1}</code>
 ```
 
 Сохранённая структура `XXXXXXX{...}` подсказывает шифр Цезаря: каждая буква сдвинута
@@ -22,7 +22,7 @@ $ curl -s http://127.0.0.1:8002/ | grep -o 'Сообщение дня:</b> <code
 префикс `BootCTF{`.
 
 ```console
-$ python3 - 'IvvaJAM{klmhbsa_jyfwav_jhlzhy_tvak}' <<'PY'
+$ python3 - 'IvvaJAM{klmhbsa_jyfwav_1}' <<'PY'
 import sys
 m = sys.argv[1]
 for k in range(1, 26):
@@ -31,7 +31,7 @@ for k in range(1, 26):
     if g.startswith("BootCTF{"):
         print(f"сдвиг {k}: {g}")
 PY
-сдвиг 19: BootCTF{default_crypto_caesar_motd}
+сдвиг 19: BootCTF{default_crypto_1}
 ```
 
 **Чему учит.** Шифр Цезаря — простейший подстановочный шифр; малое пространство
@@ -44,7 +44,7 @@ PY
 
 ```console
 $ curl -s http://127.0.0.1:8002/flag
-9ZW7JSZCNUlgvN4PoipywlfxPRNMn8VEfRsj/vb8
+9ZW7JSZCNUlgvN4PoipywlfxPRNMn8UZcg==
 ```
 
 Служба `/encrypt` шифрует тем же ключом наши данные. Выясним, что это за шифр:
@@ -76,17 +76,17 @@ $ curl -s -X POST --data-urlencode "data=$C" http://127.0.0.1:8002/encrypt
 ```console
 $ C=$(curl -s http://127.0.0.1:8002/flag)
 $ LEN=$(python3 -c "import base64;print(len(base64.b64decode('$C')))"); echo $LEN
-30
+25
 $ NULLS=$(python3 -c "import base64;print(base64.b64encode(b'\x00'*$LEN).decode())")
 $ KEY=$(curl -s -X POST --data-urlencode "data=$NULLS" http://127.0.0.1:8002/encrypt)
 $ echo "$KEY"
-t/rUUWUWczIE2bhu10YGnTSDRGM48JorD3pAkpOB
+t/rUUWUWczIE2bhu10YGnTSDRGM48JorDw==
 $ python3 - "$C" "$KEY" <<'PY'
 import base64, sys
 c = base64.b64decode(sys.argv[1]); k = base64.b64decode(sys.argv[2])
 print(bytes(a ^ b for a, b in zip(c, k)).decode())
 PY
-BootCTF{default_crypto_oracle}
+BootCTF{default_crypto_2}
 ```
 
 base64 здесь обязательно передавать через `--data-urlencode`: символы `+` и `/`
@@ -105,7 +105,7 @@ base64 здесь обязательно передавать через `--data
 
 ```console
 $ tar -tvf public/backup.tar
--rw-r--r-- lighthouse/lighthouse 1337 2026-11-01 09:30 encrypt.py
+-rw-r--r-- lighthouse/lighthouse  854 2026-11-01 09:30 encrypt.py
 -rw-r--r-- lighthouse/lighthouse  560 2026-11-01 09:30 report.enc
 ```
 
@@ -128,8 +128,7 @@ def derive_key(seconds: int) -> bytes:
 
 ```console
 $ python3 brute.py          # нужна библиотека pycryptodome
-mtime seconds=1793525400 = 2026-11-01 09:30:00 UTC
-seed = 1793525400
+1793525400
 АУДИТ БЕЗОПАСНОСТИ — ВНУТРЕННИЙ ОТЧЁТ
 Объект: сервис «Шифратор», ООО «Северный маяк».
 ...
@@ -169,7 +168,7 @@ for s in range(mtime - 300, mtime + 301):
 ```console
 $ A=$(curl -s http://127.0.0.1:8002/archive)
 $ ALEN=$(python3 -c "import base64;print(len(base64.b64decode('$A')))"); echo $ALEN
-117
+110
 $ NULLS=$(python3 -c "import base64;print(base64.b64encode(b'\x00'*$ALEN).decode())")
 $ KEY=$(curl -s -X POST --data-urlencode "data=$NULLS" http://127.0.0.1:8002/encrypt)
 $ python3 - "$A" "$KEY" <<'PY'
@@ -179,8 +178,8 @@ msg = bytes(a ^ b for a, b in zip(c, k)).decode("utf-8", "replace")
 print(msg)
 print("Флаг:", re.search(r"BootCTF\{[^}]+\}", msg).group())
 PY
-Spare access flag for the backup channel: BootCTF{default_crypto_keyreuse}. Do not disclose the master key to anyone.
-Флаг: BootCTF{default_crypto_keyreuse}
+Spare access flag for the backup channel: BootCTF{default_crypto_4}. Do not disclose the master key to anyone.
+Флаг: BootCTF{default_crypto_4}
 ```
 
 Тем же приёмом с нулевыми байтами добывается полный ключ (нужной длины), и сообщение

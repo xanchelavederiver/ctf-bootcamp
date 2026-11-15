@@ -17,7 +17,7 @@ app = Flask(__name__)
 def flag(n: int) -> str:
     value = os.environ.get(f"WEB_FLAG_{n}")
     if not value:
-        raise RuntimeError(f"WEB_FLAG_{n} не задан (см. deploy/.env)")
+        raise RuntimeError(f"WEB_FLAG_{n} не задан (см. flags.env.defaults)")
     return value
 
 
